@@ -6,20 +6,20 @@
 
 import subprocess
 import os
-from CalcProblemGenerator import problem_generators
+from CalcProblemGenerator import calc_problem_generators
 
 # Example of user input to specify problem counts for each type
 problem_counts = {
-    'derivative': 2,
-    'integral': 5,
+    'derivative': 1,
+    'integral': 1,
     'u_substitution': 1,
     'integration_by_parts': 1,
-    'trig_integral': 3,
-    'trig_substitution': 3,
+    'trig_integral': 1,
+    'trig_substitution': 1,
     'partial_fractions': 1,
     'improper_integral': 1,
     'limit': 1,
-    'series': 2,
+    'series': 1,
 }
 
 def generate_custom_calculus_test(problem_counts):
@@ -37,9 +37,9 @@ def generate_custom_calculus_test(problem_counts):
 
     # Loop through the problem types and generate the specified number of problems
     for problem_type, count in problem_counts.items():
-        if problem_type in problem_generators:
+        if problem_type in calc_problem_generators:
             for _ in range(count):
-                problem_func = problem_generators[problem_type]
+                problem_func = calc_problem_generators[problem_type]
                 problem, solution = problem_func()
                 test_problems.append((problem, solution))
     

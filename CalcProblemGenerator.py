@@ -29,7 +29,7 @@ def generate_derivative():
     """
     func = random.choice(basic_functions)
     problem = f"Find the derivative of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.diff(func, x))} \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.diff(func, x)))} \\]"
     return problem, solution
 
 def generate_integral():
@@ -41,7 +41,7 @@ def generate_integral():
     """
     func = random.choice(basic_functions)
     problem = f"Find the integral of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_u_substitution():
@@ -53,7 +53,7 @@ def generate_u_substitution():
     """
     func = random.choice([sp.sin(2*x), sp.exp(2*x), (2*x + 1)**3])
     problem = f"Use U-substitution to find the integral of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_integration_by_parts():
@@ -65,7 +65,7 @@ def generate_integration_by_parts():
     """
     func = random.choice([x * sp.exp(x), x * sp.ln(x)])
     problem = f"Use integration by parts to find the integral of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_trigonometric_integral():
@@ -77,7 +77,7 @@ def generate_trigonometric_integral():
     """
     func = random.choice([sp.sin(x)**2, sp.cos(x)**2, sp.sin(x)*sp.cos(x)])
     problem = f"Find the integral of the trigonometric function: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_trigonometric_substitution():
@@ -89,7 +89,7 @@ def generate_trigonometric_substitution():
     """
     func = random.choice([sp.sqrt(1 - x**2), sp.sqrt(x**2 - 1)])
     problem = f"Use trigonometric substitution to find the integral of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_partial_fractions():
@@ -101,7 +101,7 @@ def generate_partial_fractions():
     """
     func = random.choice([1/(x*(x+1)), 1/(x**2 + 1)])
     problem = f"Use partial fractions to find the integral of: ${sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, x))} + C \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, x)))} + C \\]"
     return problem, solution
 
 def generate_improper_integral():
@@ -113,7 +113,7 @@ def generate_improper_integral():
     """
     func = random.choice([1/(x**2), 1/(x**2 + 1)])
     problem = f"Find the improper integral of: ${sp.latex(func)}$ from $1$ to $\\infty$"
-    solution = f"\\[ {sp.latex(sp.integrate(func, (x, 1, sp.oo)))} \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.integrate(func, (x, 1, sp.oo))))} \\]"
     return problem, solution
 
 def generate_limit():
@@ -126,7 +126,7 @@ def generate_limit():
     func = random.choice(basic_functions)
     point = random.choice([0, 1, sp.oo])
     problem = f"Find the limit of: ${sp.latex(func)}$ as $x$ approaches ${sp.latex(point)}$"
-    solution = f"\\[ {sp.latex(sp.limit(func, x, point))} \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.limit(func, x, point)))} \\]"
     return problem, solution
 
 def generate_series():
@@ -138,11 +138,11 @@ def generate_series():
     """
     func = random.choice([x**n/sp.factorial(n), x**n])
     problem = f"Find the sum of the series: $\\sum_{{n=0}}^{{\\infty}} {sp.latex(func)}$"
-    solution = f"\\[ {sp.latex(sp.summation(func, (n, 0, sp.oo)))} \\]"
+    solution = f"\\[ {sp.latex(sp.simplify(sp.summation(func, (n, 0, sp.oo))))} \\]"
     return problem, solution
 
 # Mapping of problem types to functions
-problem_generators = {
+calc_problem_generators = {
     'derivative': generate_derivative,
     'integral': generate_integral,
     'u_substitution': generate_u_substitution,
