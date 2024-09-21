@@ -10,6 +10,9 @@ export async function POST(req: NextRequest): Promise<Response> {
   const problemsOutputPath = path.join(process.cwd(), 'public', 'calculus_problems.pdf');
   const solutionsOutputPath = path.join(process.cwd(), 'public', 'calculus_solutions.pdf');
 
+  console.log("Received problem counts:", problemCounts);
+  console.log("Python script path:", pythonScriptPath);
+
   return new Promise((resolve) => {
     exec(`python3 ${pythonScriptPath} '${JSON.stringify(problemCounts)}' '${problemsOutputPath}' '${solutionsOutputPath}'`, (error) => {
       if (error) {
@@ -19,11 +22,11 @@ export async function POST(req: NextRequest): Promise<Response> {
         );
       }
 
-      // Return the URLs of the generated PDFs
       const pdfUrls = {
         problems: '/calculus_problems.pdf',
         solutions: '/calculus_solutions.pdf',
       };
+      console.log("PDF URLs:", pdfUrls);
       resolve(NextResponse.json(pdfUrls));
     });
   });
