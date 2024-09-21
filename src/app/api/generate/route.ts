@@ -6,7 +6,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const problemCounts = await req.json();
 
   // Define the paths to the Python script and output PDFs
-  const pythonScriptPath = path.join(process.cwd(), 'scripts', 'generate_problems.py');
+  const pythonScriptPath = path.join(process.cwd(), 'api', 'generate_problems.py');
   const problemsOutputPath = path.join(process.cwd(), 'public', 'calculus_problems.pdf');
   const solutionsOutputPath = path.join(process.cwd(), 'public', 'calculus_solutions.pdf');
 
