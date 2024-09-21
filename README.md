@@ -1,4 +1,4 @@
-# MathTestCreator
+# MathQs
 
 ## Author: Peyton Martin
 
