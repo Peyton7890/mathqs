@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
   const problemsOutputPath = path.join(process.cwd(), 'public', 'calculus_problems.pdf');
   const solutionsOutputPath = path.join(process.cwd(), 'public', 'calculus_solutions.pdf');
 
-  return new Promise((resolve, reject) => {
-    exec(`python3 ${pythonScriptPath} '${JSON.stringify(problemCounts)}' '${problemsOutputPath}' '${solutionsOutputPath}'`, (error, stdout, stderr) => {
+  return new Promise((resolve) => {
+    exec(`python3 ${pythonScriptPath} '${JSON.stringify(problemCounts)}' '${problemsOutputPath}' '${solutionsOutputPath}'`, (error) => {
       if (error) {
         console.error(`exec error: ${error}`);
         return resolve(
