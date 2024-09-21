@@ -14,7 +14,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   console.log("Python script path:", pythonScriptPath);
 
   return new Promise((resolve) => {
-    exec(`python3 ${pythonScriptPath} '${JSON.stringify(problemCounts)}' '${problemsOutputPath}' '${solutionsOutputPath}'`, (error) => {
+    exec(`python ${pythonScriptPath} '${JSON.stringify(problemCounts)}' '${problemsOutputPath}' '${solutionsOutputPath}'`, (error) => {
       if (error) {
         console.error(`exec error: ${error}`);
         return resolve(
