@@ -3,8 +3,21 @@
 import { useState } from "react";
 import axios from "axios";
 
+type ProblemCounts = {
+  derivative: number;
+  integral: number;
+  u_substitution: number;
+  integration_by_parts: number;
+  trig_integral: number;
+  trig_substitution: number;
+  partial_fractions: number;
+  improper_integral: number;
+  limit: number;
+  series: number;
+};
+
 export default function Home() {
-  const [problemCounts, setProblemCounts] = useState({
+  const [problemCounts, setProblemCounts] = useState<ProblemCounts>({
     derivative: 2,
     integral: 2,
     u_substitution: 1,
@@ -22,7 +35,7 @@ export default function Home() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProblemCounts({
       ...problemCounts,
-      [e.target.name]: parseInt(e.target.value),
+      [e.target.name as keyof ProblemCounts]: parseInt(e.target.value), // Type assertion here
     });
   };
 
@@ -48,7 +61,7 @@ export default function Home() {
             <input
               type="number"
               name={problemType}
-              value={problemCounts[problemType]}
+              value={problemCounts[problemType as keyof ProblemCounts]} // Type assertion here
               onChange={handleChange}
               className="border p-2 rounded text-gray-900 font-semibold w-20"
             />
