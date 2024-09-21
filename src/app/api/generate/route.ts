@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import path from 'path';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
   const problemCounts = await req.json();
 
   // Define the paths to the Python script and output PDFs
