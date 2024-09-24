@@ -1,0 +1,34 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus Problem Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <h1>Calculus Problem Generator</h1>
+    <form action="/generate/" method="post">
+        <label>Derivatives: <input type="number" name="derivative" min="0" value="0"></label><br>
+        <label>Integrals: <input type="number" name="integral" min="0" value="0"></label><br>
+        <label>U-Substitution: <input type="number" name="u_substitution" min="0" value="0"></label><br>
+        <label>Integration by Parts: <input type="number" name="integration_by_parts" min="0" value="0"></label><br>
+        <label>Trigonometric Integrals: <input type="number" name="trig_integral" min="0" value="0"></label><br>
+        <label>Trigonometric Substitution: <input type="number" name="trig_substitution" min="0" value="0"></label><br>
+        <label>Partial Fractions: <input type="number" name="partial_fractions" min="0" value="0"></label><br>
+        <label>Improper Integrals: <input type="number" name="improper_integral" min="0" value="0"></label><br>
+        <label>Limits: <input type="number" name="limit" min="0" value="0"></label><br>
+        <label>Series: <input type="number" name="series" min="0" value="0"></label><br>
+        <input type="submit" value="Generate Test">
+    </form>
+
+    {% if problems_pdf %}
+    <h2>Download Links:</h2>
+    <ul>
+        <li><a href="/download/{{ problems_pdf }}">Download Problems PDF</a></li>
+        <li><a href="/download/{{ solutions_pdf }}">Download Solutions PDF</a></li>
+    </ul>
+    {% endif %}
+</body>
+</html>
