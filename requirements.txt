@@ -1,6 +1,5 @@
 Jinja2==3.0.2
 matplotlib==3.5.3
-Pillow==9.5.0
 python-multipart==0.0.8
 reportlab==4.2.2
 sympy==1.10.1
