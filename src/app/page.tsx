@@ -17,7 +17,7 @@ type ProblemCounts = {
 };
 
 export default function Home() {
-  const [problemCounts, setProblemCounts] = useState<ProblemCounts>({
+  const [problemCounts, setProblemCounts] = useState({
     derivative: 2,
     integral: 2,
     u_substitution: 1,
@@ -35,7 +35,7 @@ export default function Home() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProblemCounts({
       ...problemCounts,
-      [e.target.name as keyof ProblemCounts]: parseInt(e.target.value), // Type assertion here
+      [e.target.name]: parseInt(e.target.value),
     });
   };
 
@@ -43,7 +43,7 @@ export default function Home() {
     e.preventDefault();
     try {
       const response = await axios.post("/api/generate", problemCounts);
-      setPdfUrls(response.data); // Set both PDF URLs returned from backend
+      setPdfUrls(response.data);
     } catch (error) {
       console.error("Error generating PDFs:", error);
     }
@@ -55,13 +55,13 @@ export default function Home() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {Object.keys(problemCounts).map((problemType) => (
           <div key={problemType} className="flex items-center space-x-2">
-            <label className="flex-1 text-lg font-semibold text-white-800">
-              {problemType.replace(/_/g, " ")} {/* Replaces underscores with spaces */}
+            <label className="flex-1 text-lg font-semibold text-gray-800">
+              {problemType.replace(/_/g, " ")}
             </label>
             <input
               type="number"
               name={problemType}
-              value={problemCounts[problemType as keyof ProblemCounts]} // Type assertion here
+              value={problemCounts[problemType as keyof ProblemCounts]}
               onChange={handleChange}
               className="border p-2 rounded text-gray-900 font-semibold w-20"
             />

@@ -47,7 +47,3 @@ This will generate LaTeX files for both problems and solutions, compile them int
 ## Output
 
 The generated PDF files will be named `calculus_problems.pdf` and `calculus_solutions.pdf`.
-
-## License
-
-This project is licensed under the MIT License.
