@@ -6,7 +6,7 @@
         "use": "@vercel/python"
       },
       {
-        "src": "src/app/**/*.tsx",
+        "src": "package.json",
         "use": "@vercel/next"
       }
     ],
@@ -17,4 +17,5 @@
       }
     ]
   }
+  
   
