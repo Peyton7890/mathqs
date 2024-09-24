@@ -21,7 +21,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     console.log(`Executing command: ${command}`);
 
     // Execute the command
-    const result = await new Promise<string>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       exec(command, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           return reject(new Error('Error generating PDFs'));
         }
         console.log(`stdout: ${stdout}`);
-        resolve(stdout);
+        resolve();
       });
     });
 
