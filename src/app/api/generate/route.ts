@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import path from 'path';
 
 // Define the paths to the Python script and output PDFs
-const pythonScriptPath = path.join(process.cwd(), 'scripts', 'generate_problems.py');
+const pythonScriptPath = path.join(process.cwd(), 'api', 'main.py');
 const problemsOutputPath = path.join(process.cwd(), 'public', 'calculus_problems.pdf');
 const solutionsOutputPath = path.join(process.cwd(), 'public', 'calculus_solutions.pdf');
 
