@@ -45,7 +45,7 @@ def generate_custom_calculus_test(problem_counts):
     
     return test_problems
 
-def generate_problems_latex(test_problems, filename="tmp/calculus_problems.tex"):
+def generate_problems_latex(test_problems, filename="calculus_problems.tex"):
     """
     Generate a LaTeX document for the problems.
 
@@ -92,7 +92,7 @@ def generate_problems_latex(test_problems, filename="tmp/calculus_problems.tex")
     
     return filename
 
-def generate_solutions_latex(test_problems, filename="tmp/calculus_solutions.tex"):
+def generate_solutions_latex(test_problems, filename="calculus_solutions.tex"):
     """
     Generate a LaTeX document for the solutions.
 
@@ -151,8 +151,8 @@ def compile_latex_to_pdf(latex_filename):
 test_problems = generate_custom_calculus_test(problem_counts)
 
 # Generate the LaTeX documents
-problems_filename = generate_problems_latex(test_problems, filename="tmp/calculus_problems.tex")
-solutions_filename = generate_solutions_latex(test_problems, filename="tmp/calculus_solutions.tex")
+problems_filename = generate_problems_latex(test_problems, filename="calculus_problems.tex")
+solutions_filename = generate_solutions_latex(test_problems, filename="calculus_solutions.tex")
 
 # Compile the LaTeX documents into PDFs
 compile_latex_to_pdf(problems_filename)

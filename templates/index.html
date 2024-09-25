@@ -26,8 +26,8 @@
     {% if problems_pdf %}
     <h2>Download Links:</h2>
     <ul>
-        <li><a href="/download/{{ problems_pdf }}">Download Problems PDF</a></li>
-        <li><a href="/download/{{ solutions_pdf }}">Download Solutions PDF</a></li>
+        <li><a href="{{ problems_pdf }}" download>Download Problems PDF</a></li>
+        <li><a href="{{ solutions_pdf }}" download>Download Solutions PDF</a></li>
     </ul>
     {% endif %}
 </body>

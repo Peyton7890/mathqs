@@ -10,7 +10,7 @@ app = FastAPI()
 
 # Mount the static files directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/tmp", StaticFiles(directory="public"), name="tmp")  # Serve PDFs from tmp directory
+app.mount("/public", StaticFiles(directory="public"), name="public")  # Serve PDFs from public directory
 
 templates = Jinja2Templates(directory="templates")
 
@@ -49,29 +49,33 @@ async def generate_test(
     test_problems = generate_custom_calculus_test(problem_counts)
 
     # Generate the LaTeX documents
-    problems_filename = generate_problems_latex(test_problems, filename="tmp/calculus_problems.tex")
-    solutions_filename = generate_solutions_latex(test_problems, filename="tmp/calculus_solutions.tex")
+    problems_filename = generate_problems_latex(test_problems, filename="calculus_problems.tex")
+    solutions_filename = generate_solutions_latex(test_problems, filename="calculus_solutions.tex")
 
     # Compile the LaTeX documents into PDFs
     compile_latex_to_pdf(problems_filename)
     compile_latex_to_pdf(solutions_filename)
 
     # Move PDFs to public folder
-    # shutil.move("calculus_problems.pdf", "public/calculus_problems.pdf")
-    # shutil.move("calculus_solutions.pdf", "public/calculus_solutions.pdf")
+    shutil.move("calculus_problems.pdf", "public/calculus_problems.pdf")
+    shutil.move("calculus_solutions.pdf", "public/calculus_solutions.pdf")
 
     # Delete the temporary files
-    for filename in [problems_filename, solutions_filename, "tmp/calculus_problems.aux", "tmp/calculus_problems.log", "tmp/calculus_solutions.aux", "tmp/calculus_solutions.log"]:
+    for filename in [problems_filename, solutions_filename, "calculus_problems.aux", "calculus_problems.log", "calculus_solutions.aux", "calculus_solutions.log"]:
         if os.path.exists(filename):
             os.remove(filename)
 
     # Render the homepage with download links
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "problems_pdf": "/tmp/calculus_problems.pdf",
-        "solutions_pdf": "/tmp/calculus_solutions.pdf"
+        "problems_pdf": "/public/calculus_problems.pdf",
+        "solutions_pdf": "/public/calculus_solutions.pdf"
     })
 
 @app.get("/download/{filename}")
 async def download_file(filename: str):
-    return FileResponse(filename)
+    file_path = f"public/{filename}"
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    else:
+        return {"error": "File not found."}

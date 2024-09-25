@@ -2,7 +2,7 @@
 
 ## Author: Peyton Martin
 
-This project consists of two Python modules that generate various types of calculus problems and their solutions, including derivatives, integrals, and more complex topics. The problems are formatted into LaTeX documents and compiled into PDF files.
+MathQS is a FastAPI web application that allows users to generate custom math tests based on user-defined problem counts. The application compiles the problems and solutions into LaTeX documents, converts them to PDF format, and provides download links for the generated tests.
 
 ## Requirements
 
@@ -10,13 +10,15 @@ Before running the code, make sure you have Python installed on your system. You
 
 1. **SymPy**: For symbolic mathematics.
 2. **LaTeX**: For generating and compiling LaTeX documents (e.g., TeX Live, MikTeX).
-3. **subprocess**: This is included in Python's standard library, so no installation is needed.
+3. **FastAPI**: For building the web application
+4. **Uvicorn**: For running asynchronous web applications in Python
+5. **Jinja2**: For rendering HTML templates dynamically
 
 ### Installation Instructions
 
-1. **Install SymPy**:
+1. **Install Python Modules**:
 
-   You can install SymPy using pip: "pip install sympy"
+   You can install the correct python modules using using pip: "pip install sympy fastapi uvicorn jinja2"
 
 2. **Install LaTeX**:
 
@@ -26,7 +28,7 @@ Before running the code, make sure you have Python installed on your system. You
 
 3. **Verify Installation**:
 
-Ensure that you can run `pdflatex` from the command line: "pdflatex --version"
+    Ensure that you can run `pdflatex` from the command line: "pdflatex --version"
 
 ## Running the Code
 
@@ -34,20 +36,40 @@ Ensure that you can run `pdflatex` from the command line: "pdflatex --version"
 
     Clone this repository to your local machine: "git clone <https://github.com/Peyton7890/MathTestCreator.git>"
 
-2. **Modify Problem Counts**:
+2. **Run the Code**:
 
-    Open `TestGenerator.py` and adjust the `problem_counts` dictionary to specify how many problems of each type you want to generate.
+    Start the FastAPI server script: "uvicorn app:app --reload"
 
-3. **Run the Code**:
+3. **Use the Site**:
 
-Execute the `TestGenerator.py` script: "python3 TestGenerator.py"
+    Open your web browser and navigate to http://127.0.0.1:8000
 
-This will generate LaTeX files for both problems and solutions, compile them into PDF files, and clean up any auxiliary files created during compilation.
+    Fill out the form to specify the number of problems for each type and click the Generate Test button.
 
-## Output
+    After the PDFs are generated, download links for both the problems and solutions will be displayed.
 
-The generated PDF files will be named `calculus_problems.pdf` and `calculus_solutions.pdf`.
+4. **Stop the Code**:
 
-## License
+    Press ctl+c to stop the server
 
-This project is licensed under the MIT License.
+## Directory Structure
+
+    mathqs/
+
+    │
+
+    ├── app.py                   # FastAPI application
+
+    ├── CalcProblemGenerator.py      # Problem generation logic
+
+    ├── TestGenerator.py         # Test generation logic
+
+    ├── templates/               # HTML templates
+
+    │   └── index.html           # Main template for the web app
+
+    ├── public/                  # Directory for generated PDF files
+
+    ├── static/                  # Directory for static files (e.g., CSS)
+
+    └── README.md                # Project documentation

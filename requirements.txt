@@ -1,4 +1,4 @@
-Jinja2==3.0.2
-sympy==1.10.1
-uvicorn==0.22.0
 fastapi
+uvicorn
+sympy
+jinja2
