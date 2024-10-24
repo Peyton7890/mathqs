@@ -3,8 +3,8 @@
 # Description: This module generates a custom calculus test based on user-defined problem counts
 # and compiles the problems and solutions into LaTeX documents, which are then converted to PDF.
 
-
 import subprocess
+import tempfile
 import os
 from CalcProblemGenerator import calc_problem_generators
 
@@ -34,27 +34,45 @@ def generate_custom_calculus_test(problem_counts):
         list: A list of tuples containing the problems and their solutions.
     """
     test_problems = []
+    unique_problems = set()  # Set to keep track of unique problems
 
     # Loop through the problem types and generate the specified number of problems
     for problem_type, count in problem_counts.items():
         if problem_type in calc_problem_generators:
-            for _ in range(count):
+            attempts = 0  # Track the number of attempts for each type
+            generated_count = 0  # Track how many unique problems have been generated
+
+            while generated_count < count:
                 problem_func = calc_problem_generators[problem_type]
                 problem, solution = problem_func()
-                test_problems.append((problem, solution))
-    
+
+                # Check for duplicates using the unique_problems set
+                if problem not in unique_problems:
+                    unique_problems.add(problem)  # Add to the set of unique problems
+                    test_problems.append((problem, solution))  # Append to the test problems list
+                    generated_count += 1  # Increment the count of generated problems
+
+                attempts += 1
+                if attempts > 1000:  # Prevent infinite loops; adjust as needed
+                    print(f"Warning: Too many attempts generating unique problems for '{problem_type}'.")
+                    break
+
+            # After attempting to generate, check if we achieved the desired count
+            if generated_count < count:
+                print(f"Warning: Only {generated_count} unique problems generated for '{problem_type}'.")
+
     return test_problems
 
-def generate_problems_latex(test_problems, filename="calculus_problems.tex"):
+
+def generate_problems_latex_content(test_problems):
     """
-    Generate a LaTeX document for the problems.
+    Generate LaTeX content for the problems.
 
     Args:
         test_problems (list): A list of tuples containing the problems and their solutions.
-        filename (str): The filename for the output LaTeX document.
 
     Returns:
-        str: The filename of the generated LaTeX document.
+        str: The LaTeX content of the problems.
     """
     header = r"""\documentclass{article}
 \usepackage{amsmath, amssymb}
@@ -81,27 +99,17 @@ def generate_problems_latex(test_problems, filename="calculus_problems.tex"):
         else:
             problems_content += "\\vfill\n"  # Half page spacing for the second problem
 
-    # Combine everything into a full LaTeX document
-    latex_document = header + problems_content + footer
+    return header + problems_content + footer
 
-    # Write to a .tex file
-    with open(filename, 'w') as f:
-        f.write(latex_document)
-    
-    print(f"LaTeX document for problems saved as {filename}.")
-    
-    return filename
-
-def generate_solutions_latex(test_problems, filename="calculus_solutions.tex"):
+def generate_solutions_latex_content(test_problems):
     """
-    Generate a LaTeX document for the solutions.
+    Generate LaTeX content for the solutions.
 
     Args:
         test_problems (list): A list of tuples containing the problems and their solutions.
-        filename (str): The filename for the output LaTeX document.
 
     Returns:
-        str: The filename of the generated LaTeX document.
+        str: The LaTeX content of the solutions.
     """
     header = r"""\documentclass{article}
 \usepackage{amsmath, amssymb}
@@ -122,47 +130,73 @@ def generate_solutions_latex(test_problems, filename="calculus_solutions.tex"):
         solutions_content += f"{problem}\n\n"
         solutions_content += f"{solution}\n\n"
 
-    # Combine everything into a full LaTeX document
-    latex_document = header + solutions_content + footer
+    return header + solutions_content + footer
 
-    # Write to a .tex file
-    with open(filename, 'w') as f:
-        f.write(latex_document)
-    
-    print(f"LaTeX document for solutions saved as {filename}.")
-    
-    return filename
-
-def compile_latex_to_pdf(latex_filename):
+def compile_latex_to_pdf(latex_content, pdf_filename):
     """
-    Compile a LaTeX file into a PDF using pdflatex.
+    Compile LaTeX content directly into a PDF using pdflatex without creating auxiliary files.
 
     Args:
-        latex_filename (str): The filename of the LaTeX document to compile.
+        latex_content (str): The LaTeX content to compile.
+        pdf_filename (str): The filename for the output PDF file.
     """
     try:
-        # Use subprocess to call pdflatex and generate the PDF
-        subprocess.run(['pdflatex', latex_filename], check=True)
-        print(f"PDF generated from {latex_filename}")
+        # Create a temporary directory to store all intermediate files, which will be deleted automatically
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            # Use subprocess to call pdflatex and pipe LaTeX content
+            process = subprocess.run(
+                ['pdflatex', '-output-directory', tmpdirname, '-jobname', pdf_filename.replace('.pdf', '')],
+                input=latex_content.encode('utf-8'),
+                check=True, capture_output=True
+            )
+            
+            # Move the resulting PDF to the desired location
+            tmp_pdf_path = os.path.join(tmpdirname, pdf_filename)
+            if os.path.exists(tmp_pdf_path):
+                os.rename(tmp_pdf_path, pdf_filename)
+                print(f"PDF generated as {pdf_filename}")
+            else:
+                print(f"PDF was not generated properly.")
+    
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while compiling LaTeX: {e}")
 
-# Generate test problems
-test_problems = generate_custom_calculus_test(problem_counts)
 
-# Generate the LaTeX documents
-problems_filename = generate_problems_latex(test_problems, filename="calculus_problems.tex")
-solutions_filename = generate_solutions_latex(test_problems, filename="calculus_solutions.tex")
 
-# Compile the LaTeX documents into PDFs
-compile_latex_to_pdf(problems_filename)
-compile_latex_to_pdf(solutions_filename)
+########################
+def main():
+    """
+    Main function to test the generation of custom calculus test PDFs.
+    It generates both the problem and solution PDFs and ensures no intermediate files are created.
+    """
 
-# Clean up auxiliary files generated by pdflatex
-auxiliary_extensions = ['aux', 'log', 'out']
-for ext in auxiliary_extensions:
-    try:
-        os.remove(problems_filename.replace('.tex', f'.{ext}'))
-        os.remove(solutions_filename.replace('.tex', f'.{ext}'))
-    except FileNotFoundError:
-        pass
+    # Define the problem counts for each type of calculus problem
+    p_counts = {
+        'derivative': 20,
+        'integral': 20,
+        'u_substitution': 1,
+        'integration_by_parts': 1,
+        'trig_integral': 1,
+        'trig_substitution': 1,
+        'partial_fractions': 1,
+        'improper_integral': 1,
+        'limit': 1,
+        'series': 1,
+    }
+
+    # Generate custom calculus test problems based on problem counts
+    print("Generating calculus test problems...")
+    test_problems = generate_custom_calculus_test(p_counts)
+
+    # Generate and test the problems PDF
+    print("Generating problems PDF...")
+    compile_latex_to_pdf(generate_problems_latex_content(test_problems), "calculus_problems_test.pdf")
+    print("Problems PDF generated successfully: calculus_problems_test.pdf")
+
+    # Generate and test the solutions PDF
+    print("Generating solutions PDF...")
+    compile_latex_to_pdf(generate_solutions_latex_content(test_problems), "calculus_problems_solutions.pdf")
+    print("Solutions PDF generated successfully: calculus_solutions_test.pdf")
+
+if __name__ == "__main__":
+    main()

@@ -14,11 +14,16 @@ x, n, a = sp.symbols('x n a')
 basic_functions = [
     sp.sin(x), sp.cos(x), sp.tan(x), sp.sec(x), sp.csc(x), sp.cot(x),
     sp.exp(x), sp.ln(x), sp.log(x, 10), sp.asin(x), sp.acos(x), sp.atan(x),
-    sp.sqrt(x), sp.root(x, 3), 1/x, x**2, x**3, x**(-1), x**(-2),
+    sp.sqrt(x), sp.root(x, 3), 1/x, x**2, x**3, x**4, x**5, x**6, x**7,
+    x**(-1), x**(-2), x**(-3), x**(-4),
     sp.cos(sp.pi * x), sp.sin(sp.pi * x),
     sp.exp(-x), 1/(x + 1), 1/(x**2 + 1),
     sp.sin(x)*sp.cos(x), sp.exp(sp.sin(x)), sp.log(sp.sqrt(x)),
+    sp.sinh(x), sp.cosh(x), sp.tanh(x), sp.sech(x), sp.csch(x), sp.coth(x),
+    sp.poly(x, domain='QQ'),  # General polynomial
+    sp.Piecewise((x**2, x < 0), (x, x >= 0)),  # Piecewise function
 ]
+
 
 def generate_derivative():
     """
