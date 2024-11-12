@@ -2,15 +2,10 @@
 # Python
 __pycache__/
 
-# LaTeX
-*.aux
-*.log
-*.out
-*.pdf
-
 # misc
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# terraform
+.terraform
+.tfstate

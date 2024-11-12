@@ -1,0 +1,15 @@
+{
+    "problem_counts": {
+      "derivative": 1,
+      "integral": 1,
+      "u_substitution": 1,
+      "integration_by_parts": 1,
+      "trig_integral": 1,
+      "trig_substitution": 1,
+      "partial_fractions": 1,
+      "improper_integral": 1,
+      "limit": 1,
+      "series": 1
+    }
+  }
+  
