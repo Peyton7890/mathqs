@@ -12,6 +12,14 @@ os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib'
 s3 = boto3.client('s3')
 
 def handler(event, context):
+    # ## TEST CODE TODO: Remove this section##
+    # # Generate URLs for the uploaded PDFs
+    # bucket_name = 'mathqs'  # Replace with your S3 bucket name
+    # problems_s3_path = 'problems.pdf'
+    # solutions_s3_path = 'solutions.pdf'
+    # problems_url = f'https://{bucket_name}.s3.amazonaws.com/{problems_s3_path}'
+    # solutions_url = f'https://{bucket_name}.s3.amazonaws.com/{solutions_s3_path}'
+
     # Parse problem counts from the event
     problem_counts = event.get('problem_counts', {})
 
@@ -32,8 +40,18 @@ def handler(event, context):
         problems_s3_path = 'problems.pdf'
         solutions_s3_path = 'solutions.pdf'
         
-        s3.upload_file(problems_pdf_path, bucket_name, problems_s3_path)
-        s3.upload_file(solutions_pdf_path, bucket_name, solutions_s3_path)
+        s3.upload_file(
+            problems_pdf_path, 
+            bucket_name, 
+            problems_s3_path,
+            ExtraArgs={'ACL': 'public-read'}
+        )
+        s3.upload_file(
+            solutions_pdf_path, 
+            bucket_name, 
+            solutions_s3_path,
+            ExtraArgs={'ACL': 'public-read'}
+        )
 
         # Generate URLs for the uploaded PDFs
         problems_url = f'https://{bucket_name}.s3.amazonaws.com/{problems_s3_path}'

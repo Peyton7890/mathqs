@@ -1,19 +1,10 @@
-resource "aws_s3_bucket" "files_bucket" {
-  bucket = "mathqs"
-  force_destroy = true
-}
+# Author: Peyton Martin
+# Description: Defines Lambda functions for the MathQs application
+# Resources:
+#   - Backend Lambda function and layer for PDF generation
+#   - Frontend Lambda function for serving web interface
 
-resource "aws_s3_bucket" "mathqs_lambda_bucket" {
-  bucket = "mathqs-lambda-layer-bucket"
-}
-
-resource "aws_s3_object" "lambda_layer_object" {
-  bucket = aws_s3_bucket.mathqs_lambda_bucket.bucket
-  key    = "lambda_layer.zip"
-  source = "lambda/lambda_layer.zip"
-  acl    = "private"
-}
-
+# Backend Lambda layer
 resource "aws_lambda_layer_version" "mathqs_lambda_layer" {
   layer_name          = "mathqs_lambda_layer"
   compatible_runtimes = ["python3.12"]
@@ -22,10 +13,11 @@ resource "aws_lambda_layer_version" "mathqs_lambda_layer" {
   s3_key    = aws_s3_object.lambda_layer_object.key
 }
 
-resource "aws_lambda_function" "my_lambda_function" {
+# Backend Lambda function
+resource "aws_lambda_function" "mathqs_lambda" {
   filename         = "lambda/lambda.zip"
-  function_name    = "my_lambda_function"
-  handler          = "lambda_function.handler"  # Update with the handler function
+  function_name    = "mathqs_lambda"
+  handler          = "lambda_function.handler" 
   runtime          = "python3.12"
   role             = aws_iam_role.lambda_role.arn
 
@@ -35,4 +27,19 @@ resource "aws_lambda_function" "my_lambda_function" {
 
   memory_size      = 256
   timeout          = 30
+}
+
+# Frontend Lambda function
+resource "aws_lambda_function" "frontend_lambda" {
+  filename         = "frontend/frontend_lambda.zip"
+  function_name    = "mathqs_frontend"
+  handler          = "index.handler"
+  runtime          = "nodejs18.x"
+  role            = aws_iam_role.frontend_lambda_role.arn
+
+  environment {
+    variables = {
+      BACKEND_API_URL = "${aws_apigatewayv2_stage.mathqs_stage.invoke_url}/generate"
+    }
+  }
 }
