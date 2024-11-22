@@ -1,8 +1,13 @@
-# Author: Peyton Martin
-# Description: Defines output values for the MathQs infrastructure
+################################
+# Output Definitions
+# Purpose: Provides essential URLs and endpoints
+#
 # Outputs:
-#   - API Gateway endpoint URL for client applications
-#   - Frontend URL for accessing the web interface
+# - api_endpoint: Backend API URL for PDF generation
+# - frontend_url: User interface access point
+#
+# Usage: Values are displayed after terraform apply
+################################
 
 output "api_endpoint" {
   value = "${aws_apigatewayv2_stage.mathqs_stage.invoke_url}/generate"

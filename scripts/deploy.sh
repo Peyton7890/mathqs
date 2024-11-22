@@ -1,92 +1,55 @@
 #!/bin/bash
+################################
+# MathQs Deployment Script
 # Author: Peyton Martin
-# Description: Deployment script for MathQs application
-# Steps:
-#   1. Build frontend Lambda package
-#   2. Build backend Lambda package
-#   3. Create Python dependencies layer
-#   4. Deploy infrastructure with Terraform
+#
+# This script does the following:
+#   - Packages frontend Lambda code
+#   - Runs Terraform init if needed
+#   - Creates ECR repository
+#   - Builds Docker image
+#   - Authenticates with ECR
+#   - Pushes image to repository
+#   - Deploys all AWS resources
+#
+# Requirements:
+#   - AWS CLI configured
+#   - Docker installed
+#   - Terraform installed
+################################
 
-# Define paths
+# Set variables
 TERRAFORM_DIR="../terraform"
-LAYER_DIR="../terraform/lambda/python"
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=$(aws configure get region)
+ECR_REPO="mathqs-lambda"
+TAG="latest"
 
-## Build Lambdas ##
-# Package frontend Lambda (HTML + JS)
+# Package Frontend Lambda packaging
 echo "Building frontend Lambda..."
 zip -j ../terraform/frontend/frontend_lambda.zip ../frontend/index.js ../frontend/index.html
 
-# Package backend Lambda (Python)
-echo "Building backend Lambda..."
-zip -j ../terraform/lambda/lambda.zip ../lambda/*.py
-
-## Create Lambda Layer ##
-# Prepare directory for Python packages
-mkdir -p $LAYER_DIR
-
-# Set up Python virtual environment
-python3.12 -m venv venv
-source venv/bin/activate
-
-# Install Python packages with manylinux compatibility
-echo "Installing Python dependencies..."
-pip install \
-    --upgrade \
-    -r ../lambda/requirements.txt \
-    --platform manylinux2014_x86_64 \
-    --implementation cp \
-    --python-version 3.12 \
-    --only-binary=:all: \
-    --target $LAYER_DIR \
-    --no-cache-dir
-
-# Remove unnecessary files to reduce package size
-echo "Cleaning up package files..."
-find "$LAYER_DIR" -type d -name "tests" -exec rm -rf {} + 2>/dev/null
-find "$LAYER_DIR" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
-find "$LAYER_DIR" -name "*.dist-info" -exec rm -rf {} +
-
-# Create Lambda layer ZIP
-echo "Creating Lambda layer..."
-(cd $LAYER_DIR && zip -r ../lambda_layer.zip .)
-
-# Clean up build artifacts
-deactivate
-rm -rf venv/
-rm -rf $LAYER_DIR
-
-## Deploy Infrastructure ##
 # Initialize Terraform if needed
-check_and_run_terraform_init() {
-    if [ ! -d "$TERRAFORM_DIR/.terraform" ]; then
-        echo "Initializing Terraform..."
-        (cd "$TERRAFORM_DIR" && terraform init)
-    fi
-}
+if [ ! -d "$TERRAFORM_DIR/.terraform" ]; then
+    echo "Initializing Terraform..."
+    (cd "$TERRAFORM_DIR" && terraform init)
+fi
 
-# Run Terraform deployment
-check_and_run_terraform_init
-echo "Planning Terraform changes..."
-(cd "$TERRAFORM_DIR" && terraform plan)
+# Build ECR Repository 
+echo "Phase 1: Creating ECR repository..."
+(cd "$TERRAFORM_DIR" && terraform apply -target=aws_ecr_repository.mathqs_lambda -auto-approve)
 
-echo "Applying Terraform changes..."
+# Build Docker image
+echo "Building and pushing Docker image..."
+docker build -t $ECR_REPO:$TAG ../lambda/
+
+# Authenticate with ECR
+aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+# Tag image and push to ECR
+docker tag $ECR_REPO:$TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$TAG
+docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$TAG
+
+# Deploy remaining infrastructure
+echo "Deploying remaining infrastructure..."
 (cd "$TERRAFORM_DIR" && terraform apply)
-
-# # Test TODO delete later ##
-# Invoke the Lambda function
-# echo "Invoking Lambda function..."
-# aws lambda invoke --function-name mathqs_lambda --payload file://"test-event.json" response.json
-
-# # Check if the response.json file was created and open it
-# if [ -f "response.json" ]; then
-#   echo "Opening response.json..."
-#   if command -v xdg-open &> /dev/null; then
-#     xdg-open response.json  # For Linux
-#   elif command -v open &> /dev/null; then
-#     open response.json       # For macOS
-#   else
-#     echo "Please open response.json manually. No suitable command found."
-#   fi
-# else
-#   echo "response.json was not created. Check the Lambda function invocation."
-# fi

@@ -1,32 +1,36 @@
-# Author: Peyton Martin
-# Description: Defines Lambda functions for the MathQs application
+################################
+# Lambda Functions Configuration
+# Purpose: Defines serverless compute resources
+#
 # Resources:
-#   - Backend Lambda function and layer for PDF generation
-#   - Frontend Lambda function for serving web interface
+# - ECR Repository: Hosts Docker image for backend
+# - Backend Lambda: PDF generation (Docker container)
+#   - Memory: 1024MB
+#   - Timeout: 30 seconds
+#   - Storage: 512MB
+# - Frontend Lambda: Serves web interface
+#   - Runtime: Node.js 18.x
+#   - Environment: Configured with backend URL
+################################
 
-# Backend Lambda layer
-resource "aws_lambda_layer_version" "mathqs_lambda_layer" {
-  layer_name          = "mathqs_lambda_layer"
-  compatible_runtimes = ["python3.12"]
-
-  s3_bucket = aws_s3_bucket.mathqs_lambda_bucket.bucket
-  s3_key    = aws_s3_object.lambda_layer_object.key
+# ECR repository for Lambda container
+resource "aws_ecr_repository" "mathqs_lambda" {
+  name = "mathqs-lambda"
+  force_delete = true
 }
 
 # Backend Lambda function
 resource "aws_lambda_function" "mathqs_lambda" {
-  filename         = "lambda/lambda.zip"
   function_name    = "mathqs_lambda"
-  handler          = "lambda_function.handler" 
-  runtime          = "python3.12"
+  package_type     = "Image"
+  image_uri        = "${aws_ecr_repository.mathqs_lambda.repository_url}:latest"
   role             = aws_iam_role.lambda_role.arn
 
-  layers = [
-    aws_lambda_layer_version.mathqs_lambda_layer.arn,
-  ]
-
-  memory_size      = 256
-  timeout          = 30
+  memory_size      = 1024  # Increase memory
+  timeout          = 30    # Increase timeout
+  ephemeral_storage {
+    size = 512  # Increase /tmp storage
+  }
 }
 
 # Frontend Lambda function

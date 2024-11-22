@@ -1,6 +1,13 @@
-# TestGenerator.py
-# Author: Peyton Martin
-# Description: Generates a custom calculus test with problems and solutions using Matplotlib for PDF.
+"""
+TestGenerator.py
+Author: Peyton Martin
+Description: Generates custom calculus tests with problems and solutions.
+Functions:
+    - generate_custom_calculus_test: Creates unique test problems
+    - render_math_expression: Converts expressions to LaTeX format
+    - save_problem_pdf: Generates PDF of test problems
+    - save_solutions_pdf: Generates PDF of solutions
+"""
 
 import matplotlib.pyplot as plt
 import sympy as sp
@@ -9,6 +16,12 @@ from CalcProblemGenerator import calc_problem_generators
 def generate_custom_calculus_test(problem_counts):
     """
     Generate a custom calculus test based on specified problem counts.
+    
+    Args:
+        problem_counts (dict): Dictionary mapping problem types to counts
+    
+    Returns:
+        list: List of tuples containing (problem, solution) pairs
     """
     test_problems = []
     unique_problems = set()
@@ -39,7 +52,14 @@ def generate_custom_calculus_test(problem_counts):
 
 def render_math_expression(expression, is_solution=False):
     """
-    Renders a mathematical expression in LaTeX format or returns it as plain text if it's not valid.
+    Renders a mathematical expression in LaTeX format.
+    
+    Args:
+        expression: The mathematical expression to render
+        is_solution (bool): Whether to use display math mode
+    
+    Returns:
+        str: LaTeX formatted expression
     """
     try:
         # If the expression is purely a math expression, render it with sympy
@@ -56,7 +76,11 @@ def render_math_expression(expression, is_solution=False):
 
 def save_problem_pdf(test_problems, pdf_filename="calculus_problems_test.pdf"):
     """
-    Generate a PDF for the problems using Matplotlib.
+    Generate a PDF containing the test problems.
+    
+    Args:
+        test_problems (list): List of (problem, solution) tuples
+        pdf_filename (str): Output PDF filename
     """
     plt.figure(figsize=(8, 11))
     plt.title("Calculus Test Problems", fontsize=16, pad=1)  # Increase title padding for extra space
@@ -64,8 +88,9 @@ def save_problem_pdf(test_problems, pdf_filename="calculus_problems_test.pdf"):
 
     # Start text placement lower down to add space between title and first problem
     start_y = 0.95
-
+    print("we got here #1")
     for i, (problem, _) in enumerate(test_problems, 1):
+        print("we got here #2")
         problem_text = render_math_expression(problem)  # Render problem
         plt.text(0.5, start_y - (i - 1) * 0.1, f"Problem {i}: {problem_text}", fontsize=12, ha='center')
 
@@ -75,7 +100,11 @@ def save_problem_pdf(test_problems, pdf_filename="calculus_problems_test.pdf"):
 
 def save_solutions_pdf(test_problems, pdf_filename="calculus_solutions_test.pdf"):
     """
-    Generate a PDF for the solutions using Matplotlib.
+    Generate a PDF containing the test solutions.
+    
+    Args:
+        test_problems (list): List of (problem, solution) tuples
+        pdf_filename (str): Output PDF filename
     """
     plt.figure(figsize=(8, 11))
     plt.title("Calculus Test Solutions", fontsize=16, pad=1) 
@@ -96,3 +125,40 @@ def save_solutions_pdf(test_problems, pdf_filename="calculus_solutions_test.pdf"
     plt.savefig(pdf_filename, bbox_inches='tight')
     plt.close()
     print(f"Solutions PDF generated as {pdf_filename}")
+
+if __name__ == "__main__":
+    # Test problem counts
+    test_counts = {
+        "derivative": 1,
+        "integral": 1,
+        "u_substitution": 1,
+        "integration_by_parts": 1,
+        "trig_integral": 1,
+        "trig_substitution": 1,
+        "partial_fractions": 1,
+        "improper_integral": 1,
+        "limit": 1,
+        "series": 1
+    }
+    
+    # Generate test problems
+    print("Generating test problems...")
+    problems = generate_custom_calculus_test(test_counts)
+    
+    # Print problems and solutions to console
+    print("\nGenerated Problems and Solutions:")
+    for i, (problem, solution) in enumerate(problems, 1):
+        print(f"\nProblem {i}:")
+        print(f"Question: {problem}")
+        print(f"Solution: {solution}")
+    
+    # Generate PDFs
+    print("\nGenerating PDFs...")
+    try:
+        save_problem_pdf(problems, "test_problems.pdf")
+        save_solutions_pdf(problems, "test_solutions.pdf")
+        print("\nTest files generated successfully!")
+        print("- test_problems.pdf")
+        print("- test_solutions.pdf")
+    except Exception as e:
+        print(f"\nError generating PDFs: {str(e)}")

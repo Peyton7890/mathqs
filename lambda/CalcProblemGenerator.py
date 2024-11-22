@@ -1,7 +1,25 @@
-# CalcProblemGenerator.py
-# Author: Peyton Martin
-# Description: This module generates various types of calculus problems and their solutions, 
-# including derivatives, integrals, and more complex topics such as U-substitution and integration by parts.
+"""
+CalcProblemGenerator.py
+Author: Peyton Martin
+Description: Collection of calculus problem generators.
+Each generator creates unique problems and their solutions.
+
+Problem Types:
+    - Derivatives (basic and chain rule)
+    - Integrals (basic and advanced)
+    - U-Substitution integrals
+    - Integration by Parts
+    - Trigonometric integrals
+    - Trigonometric substitution
+    - Partial fractions
+    - Improper integrals
+    - Limits
+    - Series (convergence and divergence)
+
+Returns:
+    Each generator returns a tuple: (problem_string, solution_string)
+    Both strings are LaTeX-compatible mathematical expressions
+"""
 
 import random
 import sympy as sp

@@ -1,8 +1,21 @@
-# Author: Peyton Martin
-# Description: Configures API Gateways
-# Resources:
-#   - Backend API Gateway for PDF generation
-#   - Frontend API Gateway for web interface
+################################
+# API Gateway Configuration
+# Purpose: Manages HTTP endpoints for the application
+#
+# Components:
+# 1. Backend API Gateway
+#    - Handles PDF generation requests
+#    - CORS enabled for web access
+#    - POST /generate endpoint
+#
+# 2. Frontend API Gateway
+#    - Serves web interface
+#    - GET /generate endpoint
+#
+# Security:
+# - Lambda permissions for API Gateway invocation
+# - CORS policies for frontend access
+################################
 
 ## Backend API Gateway resources ##
 

@@ -1,12 +1,26 @@
-# Author: Peyton Martin
-# Description: Defines IAM roles and policies
-# Resources:
-#   - Backend Lambda execution role and policies
-#   - Frontend Lambda execution role and policies
+################################
+# IAM Configuration
+# Purpose: Manages IAM roles and policies for Lambda functions
+#
+# Components:
+# 1. Backend Lambda Role
+#    - Basic Lambda execution
+#    - S3 access for PDF storage
+#    - ECR access for container image
+#
+# 2. Frontend Lambda Role
+#    - Basic Lambda execution
+#    - Environment variable access
+#
+# Policies:
+# - Custom S3 policy for PDF operations
+# - ECR pull permissions for container
+# - CloudWatch logging permissions
+################################
 
 ## Backend IAM resources ##
 
-# Create Lambda execution role
+# Backend Lambda IAM role
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_execution_role"
   assume_role_policy = jsonencode({
@@ -32,7 +46,10 @@ resource "aws_iam_policy" "s3_put_policy" {
     "Statement": [
       {
         "Effect": "Allow",
-        "Action": "s3:PutObject",
+        "Action": [
+          "s3:PutObject",
+          "s3:PutObjectAcl"
+        ],
         "Resource": "arn:aws:s3:::mathqs/*"
       }
     ]
@@ -50,7 +67,13 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_put_policy_attachment" {
   policy_arn = aws_iam_policy.s3_put_policy.arn
 }
 
-## Backend IAM resources ##
+# Add ECR pull permissions
+resource "aws_iam_role_policy_attachment" "lambda_ecr_policy" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+## Frontend IAM resources ##
 # Frontend Lambda IAM role
 resource "aws_iam_role" "frontend_lambda_role" {
   name = "frontend_lambda_execution_role"

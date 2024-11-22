@@ -1,9 +1,12 @@
-# Author: Peyton Martin
-# Description: Defines S3 buckets for MathQs application
+################################
+# S3 Configuration
+# Purpose: Manages S3 storage for MathQs application
+#
 # Resources:
-#   - Public S3 bucket for storing generated PDFs
-#   - Private S3 bucket for Lambda layers
-#   - Bucket policies and access controls
+# - Public S3 bucket (mathqs): Stores generated PDF files
+# - Bucket policy: Enables public read access
+# - Access controls: Configures ownership and ACLs
+################################
 
 # Public bucket for storing generated PDF files
 resource "aws_s3_bucket" "files_bucket" {
@@ -54,16 +57,4 @@ resource "aws_s3_bucket_acl" "files_bucket_acl" {
 
   bucket = aws_s3_bucket.files_bucket.id
   acl    = "public-read"
-}
-
-# Private bucket for storing Lambda layers
-resource "aws_s3_bucket" "mathqs_lambda_bucket" {
-  bucket = "mathqs-lambda-layer-bucket"
-}
-
-resource "aws_s3_object" "lambda_layer_object" {
-  bucket = aws_s3_bucket.mathqs_lambda_bucket.bucket
-  key    = "lambda_layer.zip"
-  source = "lambda/lambda_layer.zip"
-  acl    = "private"
 }
