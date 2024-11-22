@@ -36,7 +36,7 @@ if [ ! -d "$TERRAFORM_DIR/.terraform" ]; then
 fi
 
 # Build ECR Repository 
-echo "Phase 1: Creating ECR repository..."
+echo "Creating ECR repository..."
 (cd "$TERRAFORM_DIR" && terraform apply -target=aws_ecr_repository.mathqs_lambda -auto-approve)
 
 # Build Docker image

@@ -58,3 +58,17 @@ resource "aws_s3_bucket_acl" "files_bucket_acl" {
   bucket = aws_s3_bucket.files_bucket.id
   acl    = "public-read"
 }
+
+# Add lifecycle rule for automatic deletion
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
+  bucket = aws_s3_bucket.files_bucket.id
+
+  rule {
+    id     = "cleanup"
+    status = "Enabled"
+
+    expiration {
+      days = 1
+    }
+  }
+}

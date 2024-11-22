@@ -15,6 +15,7 @@ import os
 import tempfile
 import boto3
 import traceback
+import uuid
 
 from TestGenerator import generate_custom_calculus_test, save_problem_pdf, save_solutions_pdf
 
@@ -53,6 +54,11 @@ def handler(event, context):
         # Set up environment
         os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib'
         
+        # Generate unique IDs for the files
+        test_id = str(uuid.uuid4())
+        problems_s3_path = f'{test_id}/problems.pdf'
+        solutions_s3_path = f'{test_id}/solutions.pdf'
+
         # Generate custom calculus test problems
         test_problems = generate_custom_calculus_test(problem_counts)
         # Create a temporary directory for the PDF files
@@ -65,25 +71,31 @@ def handler(event, context):
             save_problem_pdf(test_problems, pdf_filename=problems_pdf_path)
             save_solutions_pdf(test_problems, pdf_filename=solutions_pdf_path)
 
-            # Upload PDFs to S3
+            # Upload PDFs to S3 with unique paths
             bucket_name = 'mathqs'  # Replace with your S3 bucket name
-            problems_s3_path = 'problems.pdf'
-            solutions_s3_path = 'solutions.pdf'
             
             s3.upload_file(
                 problems_pdf_path, 
                 bucket_name, 
                 problems_s3_path,
-                ExtraArgs={'ACL': 'public-read'}
+                ExtraArgs={
+                    'ACL': 'public-read',
+                    'ContentDisposition': 'attachment; filename="problems.pdf"',
+                    'ContentType': 'application/pdf'
+                }
             )
             s3.upload_file(
                 solutions_pdf_path, 
                 bucket_name, 
                 solutions_s3_path,
-                ExtraArgs={'ACL': 'public-read'}
+                ExtraArgs={
+                    'ACL': 'public-read',
+                    'ContentDisposition': 'attachment; filename="solutions.pdf"',
+                    'ContentType': 'application/pdf'
+                }
             )
 
-            # Generate URLs for the uploaded PDFs
+            # Generate URLs with unique paths
             problems_url = f'https://{bucket_name}.s3.amazonaws.com/{problems_s3_path}'
             solutions_url = f'https://{bucket_name}.s3.amazonaws.com/{solutions_s3_path}'
 

@@ -1,4 +1,4 @@
-# MathQs
+# MathQ's
 
 ## Author: Peyton Martin
 
