@@ -27,7 +27,7 @@ TAG="latest"
 
 # Package Frontend Lambda packaging
 echo "Building frontend Lambda..."
-zip -j ../terraform/frontend/frontend_lambda.zip ../frontend/index.js ../frontend/index.html
+(cd ../frontend && zip -r ../terraform/frontend/frontend.zip . -x ".*")
 
 # Initialize Terraform if needed
 if [ ! -d "$TERRAFORM_DIR/.terraform" ]; then

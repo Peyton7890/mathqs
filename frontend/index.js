@@ -18,6 +18,7 @@ exports.handler = async (event) => {
         statusCode: 200,
         headers: {
             'Content-Type': 'text/html',
+            'Content-Security-Policy': "default-src 'self'; connect-src *; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;"
         },
         body: html
     };
