@@ -4,23 +4,7 @@
 
 A serverless calculus test generator that creates customized calculus problems and generates downloadable PDFs of both problems and solutions.
 
-## Architecture
-
-- **Frontend**: 
-  - Static HTML/JS served via Lambda
-  - Clean, responsive interface
-  - Real-time problem count selection
-
-- **Backend**:
-  - Python-based Lambda using Docker
-  - Matplotlib for PDF generation
-  - SymPy for mathematical expressions
-
-- **Infrastructure**:
-  - API Gateway for HTTP endpoints
-  - S3 for PDF storage
-  - ECR for Docker image hosting
-  - Terraform for infrastructure as code
+Visit: <https://mathqs.com>
 
 ## Features
 
@@ -38,19 +22,39 @@ A serverless calculus test generator that creates customized calculus problems a
   - Series
 - Automatic generation of both problem and solution PDFs
 
-## Prerequisites
+## Architecture
+
+- **Frontend**: 
+  - Static HTML/JS served via Lambda
+  - Clean, responsive interface
+  - Real-time problem count selection
+
+- **Backend**:
+  - Python-based Lambda using Docker
+  - Matplotlib for PDF generation
+  - SymPy for mathematical expressions
+
+- **Infrastructure**:
+  - API Gateway for HTTP endpoints
+  - Route53 for custom domain
+  - S3 for PDF storage
+  - ECR for Docker image hosting
+  - Terraform for infrastructure as code
+
+##
+
+### Prerequisites
 
 - AWS CLI configured with appropriate permissions
 - Terraform >= 1.0
-- Docker installed
+- Docker installed and configured
 - Python 3.12
 - Node.js 18.x (for frontend Lambda)
 
 ### Deployment
 
 1. Clone the repository
-2. Run ```aws configure``` to configure your AWS account
-3. Navigate to the scripts directory and run the deployment script:
+2. Navigate to the scripts directory and run the deployment script:
 
 ```bash
 (cd scripts && ./deploy.sh)

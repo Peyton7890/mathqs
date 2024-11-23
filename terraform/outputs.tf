@@ -15,6 +15,21 @@ output "api_endpoint" {
 }
 
 output "frontend_url" {
-  value = "${aws_apigatewayv2_stage.frontend_stage.invoke_url}/generate"
+  value = "https://mathqs.com"
   description = "Frontend application URL"
+}
+
+output "nameservers" {
+  value       = data.aws_route53_zone.mathqs.name_servers
+  description = "Nameservers for domain configuration"
+}
+
+output "domain_status" {
+  value = "Domain configuration is complete. The website will be available at https://mathqs.com once DNS propagates (usually 15-30 minutes)"
+  description = "Domain setup status"
+}
+
+output "domain_nameservers" {
+  value = data.aws_route53_zone.mathqs.name_servers
+  description = "Domain nameservers (these are automatically configured by Route53)"
 }

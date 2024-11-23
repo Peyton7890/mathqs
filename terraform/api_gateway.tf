@@ -81,7 +81,7 @@ resource "aws_apigatewayv2_integration" "frontend_lambda_integration" {
 
 resource "aws_apigatewayv2_route" "frontend_route" {
   api_id    = aws_apigatewayv2_api.frontend_api.id
-  route_key = "GET /generate"
+  route_key = "GET /"  # Changed from "GET /generate"
   target    = "integrations/${aws_apigatewayv2_integration.frontend_lambda_integration.id}"
 }
 
@@ -91,4 +91,21 @@ resource "aws_lambda_permission" "frontend_api_gw" {
   function_name = aws_lambda_function.frontend_lambda.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.frontend_api.execution_arn}/*/*"
+}
+
+# Custom domain configuration for frontend
+resource "aws_apigatewayv2_domain_name" "frontend" {
+  domain_name = "mathqs.com"
+  domain_name_configuration {
+    certificate_arn = aws_acm_certificate.mathqs.arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+  depends_on = [aws_acm_certificate_validation.mathqs]
+}
+
+resource "aws_apigatewayv2_api_mapping" "frontend" {
+  api_id      = aws_apigatewayv2_api.frontend_api.id
+  domain_name = aws_apigatewayv2_domain_name.frontend.id
+  stage       = aws_apigatewayv2_stage.frontend_stage.id
 }

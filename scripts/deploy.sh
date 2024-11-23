@@ -13,8 +13,8 @@
 #   - Deploys all AWS resources
 #
 # Requirements:
-#   - AWS CLI configured
-#   - Docker installed
+#   - AWS CLI installed and configured
+#   - Docker installed and configured
 #   - Terraform installed
 ################################
 
