@@ -5,9 +5,9 @@ COPY requirements.txt ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements.txt
 
 # Copy function code
-COPY lambda_function.py ${LAMBDA_TASK_ROOT}
-COPY CalcProblemGenerator.py ${LAMBDA_TASK_ROOT}
-COPY TestGenerator.py ${LAMBDA_TASK_ROOT}
+COPY lambda/lambda_function.py ${LAMBDA_TASK_ROOT}
+COPY lambda/CalcProblemGenerator.py ${LAMBDA_TASK_ROOT}
+COPY lambda/TestGenerator.py ${LAMBDA_TASK_ROOT}
 
 # Set handler
 CMD [ "lambda_function.handler" ]
