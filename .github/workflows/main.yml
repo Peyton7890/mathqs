@@ -99,6 +99,5 @@ jobs:
 
       - name: Destroy AWS infrastructure
         run: |
-          cd ../terraform
-          terraform destroy -target=aws_ecr_repository.mathqs_lambda -auto-approve
+          aws ecr delete-repository --repository-name ${{ vars.ECR_REPO_NAME }} --force
 
