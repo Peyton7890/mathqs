@@ -55,19 +55,22 @@ jobs:
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
-      
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Secret variable
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret variable
           aws-region: ${{ vars.AWS_REGION }}  # Reference the repository variable
+
+      - name: Create ECR repository
+        run: |
+          aws ecr describe-repositories --repository-names ${{ vars.ECR_REPO_NAME }} || \
+          aws ecr create-repository --repository-name ${{ vars.ECR_REPO_NAME }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         run: aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO_NAME }}:latest lambda/
+        run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO_NAME }}:latest -f path/to/Dockerfile .
 
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO_NAME }}:latest
-        
