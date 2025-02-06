@@ -10,6 +10,7 @@ on:
         - Terraform_apply
         - Terraform_destroy
         - Build_ecr_repo
+        - Destroy_ecr_repo
 
 jobs:
   terraform_apply:
@@ -74,3 +75,30 @@ jobs:
 
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO_NAME }}:latest
+
+  destroy_ecr_repo:
+    name: "Destroy_ecr_repo"
+    if: ${{ github.event.inputs.action == 'Destroy_ecr_repo' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Secret variable
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Secret variable
+          aws-region: ${{ vars.AWS_REGION }}  # Reference the repository variable
+
+      - name: Remove Docker images
+        run: |
+          docker rmi ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO_NAME }}:latest || true
+          docker rmi ${{ vars.ECR_REPO_NAME }}:latest || true
+
+      - name: Destroy AWS infrastructure
+        run: |
+          cd ../terraform
+          terraform destroy -target=aws_ecr_repository.mathqs_lambda -auto-approve
+
